@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To do List</title>
+  </head>
+  <body>
+    <h1><%=dayOfTheWeek%></h1>
+
+    <ul>
+      <li>Eat Food</li>
+      <li>Cook food</li>
+      <li>Eat food</li>
+     <% for(let i =0; i<Task.length; i++){ %>
+      <li><%= Task[i]%></li>
+      <%}%>
+    </ul>
+
+    <form action="/" method="POST">
+      <label for="inText">Type  task</label>
+      <input type="text" name="inputText" />
+      <button type="submit">Submit form</button>
+    </form>
+  </body>
+</html>
