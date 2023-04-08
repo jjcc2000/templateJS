@@ -9,7 +9,9 @@ app.use(express.static('public'));
 
 main().catch((err) => console.log(err));
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/fruitsDB');
+  await mongoose.connect(
+    'mongodb+srv://johan:dJGYFsWkuHUxY9nw@cluster0.xehl4ka.mongodb.net/fruitsDB'
+  );
 }
 // Creating a schema (similar to collection)
 const fruitSchema = new mongoose.Schema({
@@ -17,7 +19,7 @@ const fruitSchema = new mongoose.Schema({
     type: String,
     required: [true, 'lol'],
   },
-  rating: {
+  score: {
     type: Number,
   },
   review: String,
@@ -46,6 +48,8 @@ const cosaRara = new Fruit({
 });
 const dfitems = [kiwi, orange, banana, cosaRara];
 
+//
+
 app.get('/', function (req, res) {
   Fruit.find()
     .then((items) => {
@@ -59,7 +63,16 @@ app.get('/', function (req, res) {
             console.log(err);
           });
       } else {
-        res.render('list', { ListTitle: 'Fruits', newListItems: dfitems });
+        Fruit.find({})
+          .then(function (foundItems) {
+            res.render('list', {
+              ListTitle: 'Fruits',
+              newListItems: foundItems,
+            });
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
       }
     })
     .catch((err) => {
@@ -68,9 +81,31 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-  const item = req.body.newItem;
-  dfitems.push(item);
-  res.redirect('/');
+  const newItem = new Fruit({
+    name: req.body.newItem,
+  });
+  newItem
+    .save()
+    .then(() => {
+      console.log(`${newItem} the new Fruit to the database`);
+      res.redirect('/');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+//When the POST method
+app.post('/delete', function (req, res) {
+  const checkedItemId = req.body.checkbox.trim();
+
+  Fruit.findByIdAndRemove(checkedItemId)
+    .then(() => {
+      console.log('Succesfully deleted checked item from the database');
+      res.redirect('/');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 app.listen(3000, function () {
